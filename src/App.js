@@ -7,8 +7,30 @@ import Articles from "./Components/Articles";
 import People from "./Components/People";
 import Help from "./Components/Help";
 import Article from "./Components/Article";
+import Data from "./Components/data";
+
+import { useState, useEffect } from "react";
 
 function App() {
+  let [articleList, changeArticleList] = useState("");
+  let [inpVal, changeInpVal] = useState("");
+
+  useEffect(() => {
+    changeArticleList([]);
+    let articleArray = [];
+    // Search the Data
+    Data.forEach((item, i) => {
+      // console.log("Before", item.title.match(inpVal), i);
+      if (item.title.match(inpVal) !== null) {
+        // console.log("After", item.title.match(inpVal), i);
+        articleArray.push(item);
+        changeArticleList(articleArray);
+      }
+    });
+
+    // Set articleList to the searched data
+  }, [inpVal]);
+
   return (
     <>
       <nav className="center">
@@ -25,11 +47,18 @@ function App() {
           </svg>
           <h3>Dashboard</h3>
           <div className="search-documentation">
-            <input
-              aria-label="Search Documentation"
-              type="text"
-              placeholder="Search Documentation ..."
-            />
+            <form>
+              <input
+                aria-label="Search Documentation"
+                type="text"
+                placeholder="Search Documentation ..."
+                name="search"
+                value={inpVal}
+                onChange={(event) => {
+                  changeInpVal(event.target.value);
+                }}
+              />
+            </form>
           </div>
         </div>
       </nav>
@@ -99,7 +128,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/books" element={<BookList />} />
             <Route path="/books/:id" element={<Books />} />
-            <Route path="/articles" element={<Articles />} />
+            <Route
+              path="/articles"
+              element={<Articles preList={articleList} />}
+            />
             <Route path="/people" element={<People />} />
             <Route path="/help" element={<Help />} />
             <Route path="/article/:slug" element={<Article />} />
